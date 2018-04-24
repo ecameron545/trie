@@ -50,17 +50,18 @@ public class TrieSet implements Set<String> {
 		public int size() {
 			int size = 0;
 
+			// if the current TrieNode is terminal increase size
 			if (terminal == true)
 				size = 1;
 
-			for (int i = 0; i < children.length; i++) {
-				// System.out.println(i);
-
-				if (children[i] != null) {
-
+			// loop through the children looking recursively at 
+			// each possible child.
+			for (int i = 0; i < children.length; i++) 
+				// if the child isn't null add the child's size to size
+				if (children[i] != null)
 					size += children[i].size();
-				}
-			}
+			
+			// return the current's size
 			return size;
 		}
 
@@ -78,40 +79,47 @@ public class TrieSet implements Set<String> {
 			TrieNode current = this;
 
 			if (item.length() == 1) {
+				// set terminal to false for the current character
 				if (terminal == true)
 					terminal = false;
 
+				// if the current node has children we cannot remove it
 				boolean hasChildren = false;
-				for (int i = 0; i < children.length; i++) {
+				for (int i = 0; i < children.length; i++) 
 					if (children[i] != null)
 						hasChildren = true;
-				}
+				
 
+				// returns the current node if it has children and null otherwise
 				if (hasChildren)
 					return current;
 				else
 					return null;
 			}
 
+			// run through the characters in the item to remove
 			for (int i = 0; i < item.length(); i++) {
+				// convert the characters to indexes
 				int index = c2i(item.charAt(i));
 				
+				// if the child to current exists, look for the child's end recursively 
 				if (children[index] != null) {
 					current.children[index] = current.children[index].remove(item.substring(i));
 
+					// if the current node has children we cannot remove it
 					boolean hasChildren = false;
 					for (int j = 0; j < current.children.length; j++) {
 						if (children[j] != null)
 							hasChildren = true;
 					}
 
+					// returns the current node if it has children and null otherwise
 					if (hasChildren)
 						return current;
 					else
 						return null;
 				}
 			}
-
 			return null;
 		}
 
@@ -227,15 +235,21 @@ public class TrieSet implements Set<String> {
 
 		TrieNode current = root;
 
+		// loop through each character in item 
 		for (int i = 0; i < item.length(); i++) {
+			// convert the characters to indexes
 			int index = c2i(item.charAt(i));
 
-			if (current.children[index] == null) {
+			// if the index in the child array for the current TrieNode is
+			// null, add a new TrieNode at that index.
+			if (current.children[index] == null) 
 				current.children[index] = new TrieNode();
-			}
+			
+			// Increment current down the tree
 			current = current.children[index];
 		}
 
+		// set the last current (or character in the TrieSet) to terminal
 		if (!current.terminal)
 			current.terminal = true;
 	}
@@ -247,14 +261,19 @@ public class TrieSet implements Set<String> {
 		boolean contains = true;
 		TrieNode current = root;
 
+		// loop through each character in item 
 		for (int i = 0; i < item.length(); i++) {
+			// convert the characters to indexes
 			int index = c2i(item.charAt(i));
+			
+			// if the current index is null return false, otherwise continue
 			if (current.children[index] == null)
 				contains = false;
 			else
 				current = current.children[index];
 		}
 
+		// if the last character has a false terminal, return false
 		if (!current.terminal)
 			contains = false;
 
